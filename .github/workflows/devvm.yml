@@ -1,0 +1,38 @@
+# Creates a new image version when a new version of the devvm.json file is created.
+name: devvm_create_image_version
+
+# Run the workflow only when the devvm.json file has been updated in the master branch.
+on:
+  push:
+    branches: [ master ]
+    paths: .devvm/devvm.json
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  BUILD-CUSTOM-UBUNTU-IMAGE:
+    runs-on: ubuntu-latest
+    steps:
+    - name: CHECKOUT
+      uses: actions/checkout@v2
+  
+    - name: AZURE LOGIN
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+
+    - name: BUILD WEBAPP
+      run: sudo ${{ GITHUB.WORKSPACE }}/webApp/buildscript.sh # Run necessary build scripts and copies built artifacts to  ${{ GITHUB.WORKSPACE }}/workflow-artifacts
+
+    - name: BUILD-CUSTOM-VM-IMAGE      
+      uses: azure/build-vm-image@v0
+      with:
+        resource-group-name: 'lv-rg-csrdp'
+        managed-identity: '/subscriptions/e605a3bc-ee4e-4c7a-9709-1868a28b1d4d/resourceGroups/lv-rg-csrdp/providers/Microsoft.ManagedIdentity/userAssignedIdentities/lv-uami-csrdp'
+        location: 'eastus'
+        source-os-type: 'linux'
+        source-image: Canonical:UbuntuServer:18.04-LTS:latest
+        customizer-script: |
+          sh /tmp/workflow-artifacts/install.sh
+        distributor-type: 'SharedImageGallery'
+        dist-resource-id: '/subscriptions/e605a3bc-ee4e-4c7a-9709-1868a28b1d4d/resourceGroups/lv-rg-csrdp/providers/Microsoft.Compute/galleries/lv_sig_csrdp'
+        dist-location: 'eastus'
