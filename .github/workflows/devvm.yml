@@ -29,5 +29,5 @@ jobs:
         source-os-type: 'linux'
         source-image: Canonical:UbuntuServer:18.04-LTS:latest
         dist-type: 'SharedImageGallery'
-        dist-resource-id: '/subscriptions/e605a3bc-ee4e-4c7a-9709-1868a28b1d4d/resourceGroups/lv-rg-csrdp/providers/Microsoft.Compute/galleries/lv_sig_csrdp'
+        dist-resource-id: '/subscriptions/e605a3bc-ee4e-4c7a-9709-1868a28b1d4d/resourceGroups/lv-rg-csrdp/providers/Microsoft.Compute/galleries/lv_sig_csrdp/images/devvm'
         dist-location: 'eastus'
