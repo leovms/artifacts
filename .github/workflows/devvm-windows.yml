@@ -1,5 +1,5 @@
 # Creates a new image version when a new version of the devvm.json file is created.
-name: Creeate Image Version (Windows)
+name: Create Image Version (Windows)
 
 # Run the workflow only when the devvm.json file has been updated in the master branch.
 on:
