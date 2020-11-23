@@ -13,7 +13,7 @@ jobs:
     name: Initialize
     runs-on: ubuntu-latest
     outputs:
-      devvm: ${{ fromJson(steps.set-config.outputs.config) }
+      devvm: ${{ fromJson(steps.set-config.outputs.config) }}
 
     steps:
     - name: Checkout
