@@ -37,4 +37,4 @@ jobs:
 
     steps:
     - name: Validate
-      run: echo "Version '${{ needs.init.outputs.devvm.version }}'"
+      run: echo "Version:" ${{ needs.init.outputs.devvm.version }}
