@@ -16,4 +16,4 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Get TestJson
-      run: echo ::set-output name=testJson::$(cat $${{ github.workspace }} test/test.json )
+      run: echo `cat ./.test/test.json`
