@@ -18,7 +18,7 @@ jobs:
     - name: Get TestJson
       run: |
         testJson=`cat ./.test/test.json`
-        echo "::set-output name=TEST_JSON::$testJson"
+        echo "::set-env name=TEST_JSON::$testJson"
 
     - name: Print TestJson
       run: echo $TEST_JSON
