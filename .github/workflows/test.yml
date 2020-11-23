@@ -13,7 +13,7 @@ jobs:
     name: Initialize
     runs-on: ubuntu-latest
     outputs:
-      devvm: ${{ fromJson(steps.set-config.outputs.config) }}
+      devvm: ${{ steps.set-config.outputs.config }}
 
     steps:
     - name: Checkout
@@ -33,8 +33,11 @@ jobs:
   create:
     name: Create Image Version
     needs: init
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJson(needs.init.outputs.devvm) }}
     runs-on: ubuntu-latest
 
     steps:
     - name: Validate
-      run: "echo Version: ${{ needs.init.outputs.devvm.version }}"
+      run: "echo Version: ${{ matrix.version }}"
