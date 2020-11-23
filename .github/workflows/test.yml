@@ -28,10 +28,7 @@ jobs:
         content="${content//$'\n'/'%0A'}"
         content="${content//$'\r'/'%0D'}"
         # end of optional handling for multi line json
-        echo "::set-output name=config::$content"
-
-    - name: Print TestJson version value
-      run: echo "${{fromJson(steps.get_testjson.outputs.testJson).version}}"
+        echo "::set-output name=devvm::$content"
 
   create:
     name: Create Image Version
@@ -40,4 +37,4 @@ jobs:
 
     steps:
     - name: Validate
-      run: "Version: ${{ echo needs.init.outputs.devvm.version }}"
+      run: echo "Version '${{ needs.init.outputs.devvm.version }}''"
