@@ -16,4 +16,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Get TestJson
-      run: echo fromJson(`cat ./.test/test.json`).version
+      run: |
+        testJson=`cat ./.test/test.json`
+        echo "::set-output name=TEST_JSON::$testJson"
+
+    - name: Print TestJson
+      run: echo $TEST_JSON
