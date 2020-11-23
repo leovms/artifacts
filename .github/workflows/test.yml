@@ -16,9 +16,15 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Get TestJson
+      id: get_testjson
       run: |
-        testJson=`cat ./.test/test.json`
-        echo "TEST_JSON=$testJson" >> $GITHUB_ENV
+        content=`cat ./.test/test.json`
+        # the following lines are only required for multi line json
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        # end of optional handling for multi line json
+        echo "::set-output name=testJson::$content"
 
     - name: Print TestJson
-      run: echo $TEST_JSON
+      run: echo "${{fromJson(steps.get_testjson.outputs.testJson).version}}"
