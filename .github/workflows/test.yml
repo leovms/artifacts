@@ -1,5 +1,5 @@
 # Creates a new image version when a new version of the devvm.json file is created.
-name: Test
+name: Create Image Version
 
 # Run the workflow only when the devvm.json file has been updated in the master branch.
 on:
@@ -9,14 +9,18 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Dump-Contexts:
+  init:
+    name: Initialize
     runs-on: ubuntu-latest
+    outputs:
+      devvm: ${{ fromJson(steps.set-config.outputs.config) }
+
     steps:
-    - name: CHECKOUT
+    - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Get TestJson
-      id: get_testjson
+    - name: Configure
+      id: set-config
       run: |
         content=`cat ./.test/test.json`
         # the following lines are only required for multi line json
@@ -24,7 +28,16 @@ jobs:
         content="${content//$'\n'/'%0A'}"
         content="${content//$'\r'/'%0D'}"
         # end of optional handling for multi line json
-        echo "::set-output name=testJson::$content"
+        echo "::set-output name=config::$content"
 
-    - name: Print TestJson
+    - name: Print TestJson version value
       run: echo "${{fromJson(steps.get_testjson.outputs.testJson).version}}"
+
+  create:
+    name: Create Image Version
+    needs: init
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Validate
+      run: "Version: ${{ echo needs.init.outputs.devvm.version }}"
