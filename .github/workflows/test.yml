@@ -28,7 +28,7 @@ jobs:
         content="${content//$'\n'/'%0A'}"
         content="${content//$'\r'/'%0D'}"
         # end of optional handling for multi line json
-        echo "::set-output name=devvm::$content"
+        echo "::set-output name=config::$content"
 
   create:
     name: Create Image Version
