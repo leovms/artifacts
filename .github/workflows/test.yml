@@ -18,7 +18,7 @@ jobs:
     - name: Get TestJson
       run: |
         testJson=`cat ./.test/test.json`
-        echo "::set-env name=TEST_JSON::$testJson"
+        echo "TEST_JSON=$testJson" >> $GITHUB_ENV
 
     - name: Print TestJson
       run: echo $TEST_JSON
