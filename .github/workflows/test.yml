@@ -13,6 +13,7 @@ env:
   RG_NAME: lv-rg-${{ github.event.repository.id }}
   ID_NAME: lv-uami-${{ github.event.repository.id }}
   GAL_NAME: lv_sig_${{ github.event.repository.id }}
+  IMG_NAME: ${{ github.sha }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -53,7 +54,6 @@ jobs:
         echo $ID_NAME
         echo $GAL_NAME
         echo $IMG_NAME
-        git ls-files ./.test/test.json
 
     - name: Validate
       run: "echo Version: ${{ fromJson(steps.set-config.outputs.config).version }}"
