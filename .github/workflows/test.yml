@@ -59,7 +59,7 @@ jobs:
 #        inlineScript: |
     - name: Dump Variables
       run: |
-        imageName = `sha1sum ./.test/test.json`
+        imageName = `shasum ./.test/test.json`
         echo $SUB_ID
         echo $RG_NAME
         echo $ID_NAME
