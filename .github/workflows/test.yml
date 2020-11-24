@@ -5,7 +5,7 @@ name: Create Image Version
 on:
   push:
     branches: [ master ]
-    paths: .test/test.json
+#    paths: .test/test.json
 
 env:
   # Put here for testing only. It is not meant to stay here, but instead randomly selected from pool.
@@ -46,8 +46,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      run: |
-        git ls-files ./.test/test.json
 
 #    - name: Azure Login
 #      uses: azure/login@v1
@@ -66,6 +64,7 @@ jobs:
         echo $ID_NAME
         echo $GAL_NAME
         echo $IMG_NAME
+        git ls-files ./.test/test.json
 
   create:
     name: Create Image Version
