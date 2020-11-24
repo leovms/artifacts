@@ -9,11 +9,14 @@ on:
 
 env:
   # Put here for testing only. It is not meant to stay here, but instead randomly selected from pool.
+  ROLE_NAME: Codespaces RDP - Azure Image Builder Service Image Creation
   SUB_ID: e605a3bc-ee4e-4c7a-9709-1868a28b1d4d
   RG_NAME: lv-rg-${{ github.event.repository.id }}
   ID_NAME: lv-uami-${{ github.event.repository.id }}
   GAL_NAME: lv_sig_${{ github.event.repository.id }}
-  IMG_NAME: ${{ github.sha }}
+  IMG_NAME: devvm
+  IMG_VER: ${{ github.sha }}
+  LOC: eastus
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,24 +39,26 @@ jobs:
         # end of optional handling for multi line json
         echo "::set-output name=config::$content"
 
-#    - name: Azure Login
-#      uses: azure/login@v1
-#      with:
-#        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-#    - name: Azure CLI script
-#      uses: azure/CLI@v1
-#      with:
-#        azcliversion: 2.0.72
-#        inlineScript: |
-
-    - name: Dump Variables
-      run: |
-        echo $SUB_ID
-        echo $RG_NAME
-        echo $ID_NAME
-        echo $GAL_NAME
-        echo $IMG_NAME
-
-    - name: Validate
-      run: "echo Version: ${{ fromJson(steps.set-config.outputs.config).version }}"
+    - name: Ensure
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          scope = "/subscriptions/$SUB_ID/resourceGroups/$RG_NAME"
+          rg = az group create --name "$RG_NAME" --subscription "$SUB_ID" --location "$LOC"
+          umi = az identity create --name "$ID_NAME" --resource-group "$RG_NAME" --subscription "$SUB_ID"
+          roleAssignment = az role assignment create --assignee $(fromJson(umi).clientId) --role "$ROLE_NAME" --scope "$scope"
+          sig = az sig create --gallery-name "$GAL_NAME" --resource-group "$RG_NAME" --subscription "$SUB_ID"
+          sigImgDef = az sig image-definition create --gallery-image-definition "$IMG_NAME" \
+                                                    --gallery-name "$GAL_NAME" \
+                                                    --resource-group "$RG_NAME" \
+                                                    --subscription "$SUB_ID" \
+                                                    --os-type "Windows" \
+                                                    --offer "$IMG_NAME-off" \
+                                                    --publisher "$IMG_NAME-pub" \
+                                                    --sku "$IMG_NAME-sku"
