@@ -10,14 +10,15 @@ on:
 env:
   # Put here for testing only. It is not meant to stay here, but instead randomly selected from pool.
   SUB_ID: e605a3bc-ee4e-4c7a-9709-1868a28b1d4d
+  RG_NAME: lv-rg-${{ github.event.repository.id }}
+  ID_NAME: lv-uami-${{ github.event.repository.id }}
+  GAL_NAME: lv_sig_${{ github.event.repository.id }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  init:
-    name: Initialize
+  main:
+    name: Main
     runs-on: ubuntu-latest
-    outputs:
-      devvm: ${{ steps.set-config.outputs.config }}
 
     steps:
     - name: Checkout
@@ -34,19 +35,6 @@ jobs:
         # end of optional handling for multi line json
         echo "::set-output name=config::$content"
 
-  setup:
-    name: Configure Environment
-    needs: init
-    runs-on: ubuntu-latest
-    env:
-      RG_NAME: lv-rg-${{ github.event.repository.id }}
-      ID_NAME: lv-uami-${{ github.event.repository.id }}
-      GAL_NAME: lv_sig_${{ github.event.repository.id }}
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
 #    - name: Azure Login
 #      uses: azure/login@v1
 #      with:
@@ -57,6 +45,7 @@ jobs:
 #      with:
 #        azcliversion: 2.0.72
 #        inlineScript: |
+
     - name: Dump Variables
       run: |
         echo $SUB_ID
@@ -66,11 +55,5 @@ jobs:
         echo $IMG_NAME
         git ls-files ./.test/test.json
 
-  create:
-    name: Create Image Version
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
     - name: Validate
-      run: "echo Version: ${{ fromJson(needs.init.outputs.devvm).version }}"
+      run: "echo Version: ${{ fromJson(steps.set-config.outputs.config).version }}"
