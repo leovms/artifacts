@@ -30,9 +30,37 @@ jobs:
         # end of optional handling for multi line json
         echo "::set-output name=config::$content"
 
+  setup:
+    name: Configure Environment
+    needs: init
+    runs-on: ubuntu-latest
+    env:
+      SUB_ID: ${{ secrets.AZURE_SUBSCRIPTION }}
+      RG_NAME: lv-rg-${{ github.id }}
+      ID_NAME: lv-uami-${{ github.id }}
+      GAL_NAME: lv_sig_${{ github.id }}
+
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          imageName = `git ls-files -s ./.test/test.json`
+          echo $SUB_ID
+          echo $RG_NAME
+          echo $ID_NAME
+          echo $GAL_NAME
+          echo $imageName
+
   create:
     name: Create Image Version
-    needs: init
+    needs: setup
     runs-on: ubuntu-latest
 
     steps:
