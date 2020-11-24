@@ -44,6 +44,9 @@ jobs:
       GAL_NAME: lv_sig_${{ github.event.repository.id }}
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
 #    - name: Azure Login
 #      uses: azure/login@v1
 #      with:
