@@ -56,7 +56,7 @@ jobs:
 #        inlineScript: |
     - name: Dump Variables
       run: |
-        imageName = `git ls-files -s ./.test/test.json`
+        imageName = `sha1sum ./.test/test.json`
         echo $SUB_ID
         echo $RG_NAME
         echo $ID_NAME
