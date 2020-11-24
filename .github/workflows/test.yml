@@ -7,6 +7,10 @@ on:
     branches: [ master ]
     paths: .test/test.json
 
+env:
+  # Put here for testing only. It is not meant to stay here, but instead randomly selected from pool.
+  SUB_ID: e605a3bc-ee4e-4c7a-9709-1868a28b1d4d
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   init:
@@ -35,28 +39,29 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     env:
-      SUB_ID: ${{ secrets.AZURE_SUBSCRIPTION }}
-      RG_NAME: lv-rg-${{ github.id }}
-      ID_NAME: lv-uami-${{ github.id }}
-      GAL_NAME: lv_sig_${{ github.id }}
+      RG_NAME: lv-rg-${{ github.event.repository.id }}
+      ID_NAME: lv-uami-${{ github.event.repository.id }}
+      GAL_NAME: lv_sig_${{ github.event.repository.id }}
 
     steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+#    - name: Azure Login
+#      uses: azure/login@v1
+#      with:
+#        creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Azure CLI script
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.0.72
-        inlineScript: |
-          imageName = `git ls-files -s ./.test/test.json`
-          echo $SUB_ID
-          echo $RG_NAME
-          echo $ID_NAME
-          echo $GAL_NAME
-          echo $imageName
+#    - name: Azure CLI script
+#      uses: azure/CLI@v1
+#      with:
+#        azcliversion: 2.0.72
+#        inlineScript: |
+    - name: Dump Variables
+      run: |
+        imageName = `git ls-files -s ./.test/test.json`
+        echo $SUB_ID
+        echo $RG_NAME
+        echo $ID_NAME
+        echo $GAL_NAME
+        echo $imageName
 
   create:
     name: Create Image Version
