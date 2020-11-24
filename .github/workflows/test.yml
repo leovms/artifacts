@@ -46,6 +46,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      run: |
+        git ls-files ./.test/test.json
 
 #    - name: Azure Login
 #      uses: azure/login@v1
@@ -59,12 +61,11 @@ jobs:
 #        inlineScript: |
     - name: Dump Variables
       run: |
-        imageName = `shasum ./.test/test.json`
         echo $SUB_ID
         echo $RG_NAME
         echo $ID_NAME
         echo $GAL_NAME
-        echo $imageName
+        echo $IMG_NAME
 
   create:
     name: Create Image Version
