@@ -5,60 +5,33 @@ name: Create Image Version
 on:
   push:
     branches: [ master ]
-#    paths: .test/test.json
+    paths: .test/test.json
 
-env:
-  # Put here for testing only. It is not meant to stay here, but instead randomly selected from pool.
-  ROLE_NAME: Codespaces RDP - Azure Image Builder Service Image Creation
-  SUB_ID: e605a3bc-ee4e-4c7a-9709-1868a28b1d4d
-  RG_NAME: lv-rg-${{ github.event.repository.id }}
-  ID_NAME: lv-uami-${{ github.event.repository.id }}
-  GAL_NAME: lv_sig_${{ github.event.repository.id }}
-  IMG_NAME: devvm
-  IMG_VER: ${{ github.sha }}
-  LOC: eastus
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  main:
-    name: Main
+  one:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Configure
-      id: set-config
-      run: |
-        content=`cat ./.test/test.json`
-        # the following lines are only required for multi line json
-        content="${content//'%'/'%25'}"
-        content="${content//$'\n'/'%0A'}"
-        content="${content//$'\r'/'%0D'}"
-        # end of optional handling for multi line json
-        echo "::set-output name=config::$content"
-
-    - name: Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Ensure
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.0.72
-        inlineScript: |
-          scope = "/subscriptions/$SUB_ID/resourceGroups/$RG_NAME"
-          rg = az group create --name "$RG_NAME" --subscription "$SUB_ID" --location "$LOC"
-          umi = az identity create --name "$ID_NAME" --resource-group "$RG_NAME" --subscription "$SUB_ID"
-          roleAssignment = az role assignment create --assignee $(fromJson(umi).clientId) --role "$ROLE_NAME" --scope "$scope"
-          sig = az sig create --gallery-name "$GAL_NAME" --resource-group "$RG_NAME" --subscription "$SUB_ID"
-          sigImgDef = az sig image-definition create --gallery-image-definition "$IMG_NAME" \
-                                                    --gallery-name "$GAL_NAME" \
-                                                    --resource-group "$RG_NAME" \
-                                                    --subscription "$SUB_ID" \
-                                                    --os-type "Windows" \
-                                                    --offer "$IMG_NAME-off" \
-                                                    --publisher "$IMG_NAME-pub" \
-                                                    --sku "$IMG_NAME-sku"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJSON(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJSON(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
